@@ -1,0 +1,5 @@
+name: wla_workspace
+packages:
+  - core
+  - client
+  - speedy_pizza
