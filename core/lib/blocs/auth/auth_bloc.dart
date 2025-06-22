@@ -29,6 +29,33 @@ class AuthLogoutRequested extends AuthEvent {}
 
 class AuthUserCheckRequested extends AuthEvent {}
 
+class AuthRegisterRequested extends AuthEvent {
+  final RegisterRequest registerRequest;
+
+  const AuthRegisterRequested({required this.registerRequest});
+
+  @override
+  List<Object> get props => [registerRequest];
+}
+
+class AuthPasswordResetRequested extends AuthEvent {
+  final PasswordResetRequest resetRequest;
+
+  const AuthPasswordResetRequested({required this.resetRequest});
+
+  @override
+  List<Object> get props => [resetRequest];
+}
+
+class AuthTokenRefreshRequested extends AuthEvent {
+  final String refreshToken;
+
+  const AuthTokenRefreshRequested({required this.refreshToken});
+
+  @override
+  List<Object> get props => [refreshToken];
+}
+
 // Auth States
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -43,15 +70,17 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final User user;
-  final String token;
+  final String accessToken;
+  final LoginResponse loginResponse;
 
   const AuthAuthenticated({
     required this.user,
-    required this.token,
+    required this.accessToken,
+    required this.loginResponse,
   });
 
   @override
-  List<Object> get props => [user, token];
+  List<Object> get props => [user, accessToken, loginResponse];
 }
 
 class AuthUnauthenticated extends AuthState {}
@@ -65,6 +94,17 @@ class AuthError extends AuthState {
   List<Object> get props => [message];
 }
 
+class AuthPasswordResetSuccess extends AuthState {}
+
+class AuthRegistrationSuccess extends AuthState {
+  final User user;
+
+  const AuthRegistrationSuccess({required this.user});
+
+  @override
+  List<Object> get props => [user];
+}
+
 // Auth Bloc
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService _authService;
@@ -75,6 +115,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthUserCheckRequested>(_onUserCheckRequested);
+    on<AuthRegisterRequested>(_onRegisterRequested);
+    on<AuthPasswordResetRequested>(_onPasswordResetRequested);
+    on<AuthTokenRefreshRequested>(_onTokenRefreshRequested);
   }
 
   Future<void> _onLoginRequested(
@@ -93,7 +136,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       
       emit(AuthAuthenticated(
         user: response.user,
-        token: response.token,
+        accessToken: response.accessToken,
+        loginResponse: response,
       ));
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -121,15 +165,80 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authService.getCurrentUser();
       if (user != null) {
+        // Crea una LoginResponse mock per compatibilità
+        final mockResponse = LoginResponse(
+          user: user,
+          accessToken: 'existing_token',
+          expiresAt: DateTime.now().add(const Duration(hours: 8)),
+          sessionInfo: SessionInfo(
+            sessionId: 'existing_session',
+            createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+          ),
+        );
+        
         emit(AuthAuthenticated(
           user: user,
-          token: 'existing_token', // In un'app reale, recupereresti il token salvato
+          accessToken: 'existing_token',
+          loginResponse: mockResponse,
         ));
       } else {
         emit(AuthUnauthenticated());
       }
     } catch (e) {
       emit(AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onRegisterRequested(
+    AuthRegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    
+    try {
+      final response = await _authService.register(event.registerRequest);
+      
+      emit(AuthRegistrationSuccess(user: response.user));
+      
+      // Dopo la registrazione, effettua il login automatico
+      emit(AuthAuthenticated(
+        user: response.user,
+        accessToken: response.accessToken,
+        loginResponse: response,
+      ));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onPasswordResetRequested(
+    AuthPasswordResetRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    
+    try {
+      await _authService.resetPassword(event.resetRequest);
+      emit(AuthPasswordResetSuccess());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onTokenRefreshRequested(
+    AuthTokenRefreshRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      final response = await _authService.refreshToken(event.refreshToken);
+      
+      emit(AuthAuthenticated(
+        user: response.user,
+        accessToken: response.accessToken,
+        loginResponse: response,
+      ));
+    } catch (e) {
+      emit(AuthError(e.toString()));
     }
   }
 }

@@ -631,7 +631,7 @@ class _PizzaMenuPageState extends State<PizzaMenuPage> {
                     final orderItem = PizzaOrderItem(
                       pizza: pizza,
                       quantity: quantity,
-                      size: selectedSize,
+                      size: PizzaSize.fromCode(selectedSize),
                       extraIngredients: selectedExtras,
                     );
                     setState(() => _cart.add(orderItem));

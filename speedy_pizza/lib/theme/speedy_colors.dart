@@ -17,6 +17,7 @@ class SpeedyColors {
   static const Color speedyYellow = Color(0xFFFFD700);
   static const Color speedyOrange = Color(0xFFFF8C00);
   static const Color speedyGreen = Color(0xFF10B981);
+  static const Color speedyBlue = Color(0xFF3B82F6);
 
   // Gradiente brand
   static const LinearGradient speedyGradient = LinearGradient(

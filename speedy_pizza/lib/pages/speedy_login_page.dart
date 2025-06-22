@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:core/core.dart';
 import '../theme/speedy_colors.dart';
+import 'speedy_register_page.dart';
+import 'speedy_password_reset_page.dart';
 
 class SpeedyLoginPage extends BaseLoginPage {
   const SpeedyLoginPage({super.key});
@@ -298,9 +300,13 @@ class SpeedyLoginPageState extends BaseLoginPageState {
             const SizedBox(height: 28),
             _buildLoginButton(),
             const SizedBox(height: 16),
+            _buildForgotPasswordLink(),
+            const SizedBox(height: 16),
             _buildTestCredentials(),
             const SizedBox(height: 16),
             _buildInfoCard(),
+            const SizedBox(height: 20),
+            _buildRegisterLink(),
           ],
         ),
       ),
@@ -445,6 +451,69 @@ class SpeedyLoginPageState extends BaseLoginPageState {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPasswordLink() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SpeedyPasswordResetPage(),
+          ),
+        );
+      },
+      child: Text(
+        'Hai dimenticato la password?',
+        style: TextStyle(
+          color: SpeedyColors.speedyOrange,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildRegisterLink() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SpeedyRegisterPage(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: SpeedyColors.speedyGreen.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: SpeedyColors.speedyGreen.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person_add_rounded,
+              color: SpeedyColors.speedyGreen,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Non hai un account? Registrati qui!',
+              style: TextStyle(
+                color: SpeedyColors.speedyGreen,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );

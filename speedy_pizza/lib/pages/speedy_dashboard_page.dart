@@ -4,6 +4,7 @@ import 'package:core/core.dart';
 import '../theme/speedy_colors.dart';
 import 'pizza_menu_page.dart';
 import 'my_orders_page.dart';
+import 'speedy_profile_page.dart';
 
 class SpeedyDashboardPage extends StatefulWidget {
   const SpeedyDashboardPage({super.key});
@@ -491,85 +492,7 @@ class _SpeedyDashboardPageState extends State<SpeedyDashboardPage> {
   }
 
   Widget _buildProfilePage() {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthAuthenticated) {
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                GlassContainer(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: SpeedyColors.speedyGradient,
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 40,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        state.user.name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        state.user.email,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                GlassContainer(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.settings, color: SpeedyColors.speedyYellow),
-                        title: const Text('Impostazioni', style: TextStyle(color: AppColors.textPrimary)),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.help, color: SpeedyColors.speedyOrange),
-                        title: const Text('Aiuto', style: TextStyle(color: AppColors.textPrimary)),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.logout, color: SpeedyColors.speedyRed),
-                        title: const Text('Logout', style: TextStyle(color: AppColors.textPrimary)),
-                        onTap: () {
-                          context.read<AuthBloc>().add(AuthLogoutRequested());
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
-    );
+    return const SpeedyProfilePage();
   }
 
   Widget _buildBottomNavBar() {

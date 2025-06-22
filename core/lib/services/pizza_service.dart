@@ -164,23 +164,24 @@ class PizzaService {
           PizzaOrderItem(
             pizza: _mockPizzas[0], // Margherita
             quantity: 2,
-            size: 'M',
+            size: PizzaSize.medium,
           ),
           PizzaOrderItem(
             pizza: _mockPizzas[4], // Speedy Special
             quantity: 1,
-            size: 'L',
+            size: PizzaSize.large,
             extraIngredients: ['Rucola'],
           ),
         ],
         customerName: 'Mario Rossi',
         customerPhone: '+39 334 1234567',
+        customerEmail: 'mario.rossi@email.com',
         deliveryAddress: 'Via Roma 123, Carmagnola',
         orderTime: DateTime.now().subtract(const Duration(hours: 2)),
         estimatedDelivery: DateTime.now().subtract(const Duration(hours: 1, minutes: 35)),
         status: OrderStatus.delivered,
         totalAmount: 31.50,
-        paymentMethod: 'Carta',
+        paymentMethod: PaymentMethod.cash,
       ),
       PizzaOrder(
         id: 'ORD002',
@@ -188,17 +189,18 @@ class PizzaService {
           PizzaOrderItem(
             pizza: _mockPizzas[8], // Carmagnola DOC
             quantity: 1,
-            size: 'M',
+            size: PizzaSize.medium,
           ),
         ],
         customerName: 'Mario Rossi',
         customerPhone: '+39 334 1234567',
+        customerEmail: 'mario.rossi@email.com',
         deliveryAddress: 'Via Roma 123, Carmagnola',
         orderTime: DateTime.now().subtract(const Duration(minutes: 45)),
         estimatedDelivery: DateTime.now().add(const Duration(minutes: 10)),
         status: OrderStatus.delivering,
         totalAmount: 13.00,
-        paymentMethod: 'Contanti',
+        paymentMethod: PaymentMethod.cash,
       ),
     ];
     
